@@ -79,6 +79,62 @@ public:
         }
     }
 
+    void addAnywhere(int position, T* value) override {
+        if (size_ >= CAPACITY) {
+            std::cout << "ArrayList full." << std::endl;
+            return;
+        }
+        if (position < 0 || position > size_) {
+            std::cout << "Invalid position." << std::endl;
+            return;
+        }
+        for (int i = size_; i > position; --i) {
+            data_[i] = data_[i - 1];
+        }
+        data_[position] = value;
+        ++size_;
+    }
+    void deleteAnywhere(int position) override {
+        if (position < 0 || position >= size_) {
+            std::cout << "Invalid position." << std::endl;
+            return;
+        }
+        delete data_[position];
+        for (int i = position; i < size_ - 1; ++i) {
+            data_[i] = data_[i + 1];
+        }
+        --size_;
+    }
+    void reverse() override {
+        if (size_ <= 1) return;
+        int left = 0;
+        int right = size_ - 1;
+        while (left < right) {
+            T* temp = data_[left];
+            data_[left] = data_[right];
+            data_[right] = temp;
+            ++left;
+            --right;
+        }
+    }
+    void concat(List<T>* other) override {
+        ArrayList<T>* otherArr = dynamic_cast<ArrayList<T>*>(other);
+        if (otherArr == nullptr) {
+            std::cout << "Mismatched." << std::endl;
+            return;
+        }
+        if (size_ + otherArr->size_ > CAPACITY) {
+            std::cout << "Not enough capacity." << std::endl;
+            return;
+        }
+        for (int i = 0; i < otherArr->size_; ++i) {
+            data_[size_ + i] = otherArr->data_[i];
+            otherArr->data_[i] = nullptr;
+        }
+        size_ += otherArr->size_;
+        otherArr->size_ = 0;
+    }
+
 private:
     static const int CAPACITY = 20;
     T* data_[CAPACITY];

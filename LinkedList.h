@@ -92,6 +92,92 @@ public:
         }
     }
 
+    void addAnywhere(int position, T* value) override {
+        if (position < 0 || position > size_) {
+            std::cout << "Invalid position." << std::endl;
+            return;
+        }
+
+        if (position == 0) {
+            addFront(value);
+        } else if (position == size_) {
+            addBack(value);
+        } else {
+            Node<T>* fresh = new Node<T>(value);
+            Node<T>* current = head_;
+            for (int i = 0; i < position - 1; ++i) {
+                current = current->next;
+            }
+            fresh->next = current->next;
+            current->next = fresh;
+            ++size_;
+        }
+    }
+    void deleteAnywhere(int position) override {
+        if (position < 0 || position >= size_ || head_ == nullptr) {
+            std::cout << "Invalid position." << std::endl;
+            return;
+        }
+
+        if (position == 0) {
+            deleteFront();
+        } else {
+            Node<T>* current = head_;
+            for (int i = 0; i < position - 1; ++i) {
+                current = current->next;
+            }
+            Node<T>* doomed = current->next;
+            current->next = doomed->next;
+
+            if (doomed == tail_) {
+                tail_ = current;
+            }
+
+            delete doomed->data;
+            delete doomed;
+            --size_;
+        }
+    }
+    void reverse() override {
+        if (size_ <= 1) return;
+
+        Node<T>* prev = nullptr;
+        Node<T>* current = head_;
+        Node<T>* nextNode = nullptr;
+
+        tail_ = head_;
+
+        while (current != nullptr) {
+            nextNode = current->next;
+            current->next = prev;
+            prev = current;
+            current = nextNode;
+        }
+        head_ = prev;
+    }
+    void concat(List<T>* other) override {
+        LinkedList<T>* otherLink = dynamic_cast<LinkedList<T>*>(other);
+        if (otherLink == nullptr) {
+            std::cout << "Mismatched." << std::endl;
+            return;
+        }
+
+        if (otherLink->head_ == nullptr) return;
+
+        if (head_ == nullptr) {
+            head_ = otherLink->head_;
+            tail_ = otherLink->tail_;
+        }
+        else {
+            tail_->next = otherLink->head_;
+            tail_ = otherLink->tail_;
+        }
+        size_ += otherLink->size_;
+        otherLink->head_ = nullptr;
+        otherLink->tail_ = nullptr;
+        otherLink->size_ = 0;
+    }
+
 private:
     Node<T>* head_;
     Node<T>* tail_;
