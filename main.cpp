@@ -28,7 +28,30 @@ int main() {
     more->print();
 
     // ---- Part 2: your Uno scene goes below ----
+    std::unique_ptr<List<Player>> table1 = makeList<Player>();
+    table1->addFront(new Player(3, "John"));
+    table1->addFront(new Player(2, "Jack"));
+    table1->addFront(new Player(1, "Jimmy"));
 
+    table1->addAnywhere(2, new Player(4,"Jenny"));
+
+    table1->print();
+    table1->reverse();
+    table1->print();
+
+    table1->deleteAnywhere(2);
+
+    std::unique_ptr<List<Player>> table2 = makeList<Player>();
+    table1->addFront(new Player(6, "June"));
+    table1->addFront(new Player(5, "Jaden"));
+
+    table1->print();
+    table2->print();
+
+    table1->concat(table2.get());
+
+    table1->print();
+    table2->print();
 
     return 0;
 }
